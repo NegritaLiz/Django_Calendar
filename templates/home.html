@@ -1,0 +1,150 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container m-5 p-2 rounded mx-auto bg-light shadow">
+  <div class="row m-1 p-4">
+    <div class="col">
+      <div class="p-1 h1 text-primary text-center display-inline-block">
+        <i class="fa fa-check bg-primary text-white p-2"></i>
+        <u>Mantenimientos</u>
+      </div>
+    </div> 
+  </div>
+
+  <!-- Create form -->
+  <form method="POST">
+    {% csrf_token %} {% if messages %} {% for message in messages %}
+    <div
+      class="alert alert-{{ message.tags }} alert-dismissible fade show"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %} {% endif %}
+
+    <div class="row m-1 p-3">
+      <div class="col col-11 mx-auto">
+        <div class="row bg-white justify-content-center">
+          <div class="col">
+            <input
+              type="text"
+              name="Nombre_de_la_tarea"
+              maxlength="200"
+              required
+              id="id_Nombre_de_la_tarea"
+              class="form-control form-control-lg border-0 add-todo-input bg-transparent"
+              placeholder="Añadir"
+            />
+          </div>
+          <div class="col-auto m-0 px-2 d-flex align-items-center">
+            <input
+              title="Establece una fecha de vencimiento"
+              type="date"
+              name="fecha_de_vencimiento"
+              id="id_fecha_de_vencimiento"
+              lang="es"
+            />
+          </div>
+          <div class="col-auto px-0 mx-0 mr-2 d-flex align-items-center">
+            <input type="submit" class="btn btn-primary" value="Añadir" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="p-2 mx-4 border-black-25 border-bottom"></div>
+
+  <!-- Add Task Table -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Tarea</th>
+        <th scope="col">
+          <div class="dropdown">
+            <button
+              class="btn btn-primary dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+            >
+              Prioridad
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="{% url 'home:home' %}">Todas</a>
+                <a class="dropdown-item" href="{% url 'home:prioridad' 'B' %}"
+                  >Baja</a
+                >
+                <a class="dropdown-item" href="{% url 'home:prioridad' 'M' %}"
+                  >Media</a
+                >
+                <a class="dropdown-item" href="{% url 'home:prioridad' 'A' %}"
+                  >Alta</a
+                >
+              </li>
+            </ul>
+          </div>
+        </th>
+        <th scope="col">Fecha limite</th>
+        <th scope="col">
+          <div class="dropdown">
+            <button
+              class="btn btn-primary dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+            >
+              Estado
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="{% url 'home:home' %}">Todos</a>
+                <a class="dropdown-item" href="{% url 'home:status' 'False' %}"
+                  >Pendiente</a
+                >
+                <a class="dropdown-item" href="{% url 'home:status' 'True' %}"
+                  >Completado</a
+                >
+              </li>
+            </ul>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr>
+        <td scope="row">{{ forloop.counter }}</td>
+        <td scope="row">{{ task.Nombre_de_la_tarea }}</td>
+        <td scope="row">{{ task.prioridad}}</td>
+        <td scope="row">{{ task.fecha_de_vencimiento}}</td>
+        <td scope="row">
+          {% if task.completado == True %} Completado {% else %}
+          <a class="link" href="{% url 'home:completado' task.id %}"
+            >Marcar Como Completado</a
+          >
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'home:edit' task.id %}"
+            ><i class="fa fa-edit text-primary"></i
+          ></a>
+        </td>
+        <td>
+          <a href="{% url 'home:delete' task.id%}"
+            ><i class="fa fa-trash text-danger"></i
+          ></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
